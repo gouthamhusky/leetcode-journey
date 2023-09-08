@@ -1,8 +1,11 @@
 package org.arrays
 
-fun main() {
-    val set = mutableSetOf<Int>()
+import kotlin.text.StringBuilder
 
+fun main() {
+    val nums = intArrayOf(1, 2, 3, 4)
+    val answer = productExceptSelf(nums)
+    print(answer.contentToString())
 }
 
 
@@ -104,6 +107,76 @@ fun topKFrequent(nums: IntArray, k: Int): IntArray {
     return intArrayOf()
 }
 
+// https://leetcode.com/problems/product-of-array-except-self/
+fun productExceptSelf(nums: IntArray): IntArray {
+    // create a new array called productSoFar
+    val prefix = IntArray(nums.size)
+    var prodSoFar = 1
+    for (i in nums.indices){
+        prodSoFar *= nums[i]
+        prefix[i] = prodSoFar
+    }
 
+    prodSoFar = 1
+    val postfix = IntArray(nums.size)
+    for (i in nums.size-1 downTo 0){
+        prodSoFar *= nums[i]
+        postfix[i] = prodSoFar
+    }
 
+    var answer = IntArray(nums.size)
+    for (i in 1..nums.size-2){
+        answer[i] = prefix[i-1] * postfix[i + 1]
+    }
+    answer[0] = postfix[1]
+    answer[nums.size - 1] = prefix[nums.size - 2]
 
+    return  answer
+}
+
+class Codec {
+    // Encodes a list of strings to a single string.
+    fun encode(strs: List<String>): String {
+        val encodedString = StringBuilder()
+        for(str in strs){
+            val len = str.length
+            encodedString.append(len).append('#').append(str)
+        }
+        return encodedString.toString()
+    }
+
+    // Decodes a single string to a list of strings.
+    fun decode(s: String): List<String> {
+        val decodedList = mutableListOf<String>()
+        var i = 0
+        while (i < s.length){
+            var j = i
+            while (s[j] != '#'){
+                j++
+            }
+            val length = s.substring(i, j + 1).toInt()
+            i = j + 1 + length
+            decodedList.add(s.substring(j +1, i))
+        }
+        return decodedList
+    }
+
+    // https://leetcode.com/problems/longest-consecutive-sequence/
+    fun longestConsecutive(nums: IntArray): Int {
+        val inputSet = nums.toSet()
+        var longestSeq = 0
+        for (num in inputSet){
+            if (!inputSet.contains(num - 1)){
+                var currentSeq = 1
+                var seq = num
+                while (inputSet.contains(seq + 1)){
+                    currentSeq++
+                    seq += 1
+                }
+                longestSeq = maxOf(longestSeq, currentSeq)
+            }
+
+        }
+        return longestSeq
+    }
+}

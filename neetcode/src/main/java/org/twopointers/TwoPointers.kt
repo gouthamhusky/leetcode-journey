@@ -61,3 +61,19 @@ fun threeSum(nums: IntArray): List<List<Int>> {
     }
     return solution.toList()
 }
+
+// https://leetcode.com/problems/container-with-most-water/
+fun maxArea(height: IntArray): Int {
+    var left = 0
+    var right = height.size - 1
+    var maxArea = Int.MIN_VALUE
+    while (left < right){
+        val area = (right - left) * (minOf(height[left], height[right]))
+        maxArea = maxOf(maxArea, area)
+        when{
+            height[left] <= height[right] -> left++
+            else -> right--
+        }
+    }
+    return maxArea
+}

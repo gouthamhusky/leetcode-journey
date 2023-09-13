@@ -104,8 +104,68 @@ public class SlidingWindow {
         return true;
     }
 
+    public int longestSubarrayOfSumK(int[] A, int K){
+
+        int i = 0, j = 0;
+        int N = A.length;
+        int max = Integer.MIN_VALUE, sum = 0;
+        while (j < N){
+            sum += A[j];
+            if (sum < K){
+                j++;
+            }
+            else if (sum == K){
+                max = Math.max(max, j - i + 1);
+                j++;
+            }
+            else {
+                // sum > K
+                while (sum > K && i < N){
+                    sum -= A[i];
+                    i++;
+                }
+                j++;
+            }
+        }
+        return max;
+    }
+
+    // https://practice.geeksforgeeks.org/problems/longest-k-unique-characters-substring0853/1
+    public int longestkSubstr(String s, int k) {
+        int i = 0, j = 0;
+        int max = Integer.MIN_VALUE;
+        // setup a map to keep track of the unique chars and their counts in each window
+        Map<Character, Integer> freq = new HashMap<>();
+        while(j < s.length()){
+            char charAtJ = s.charAt(j);
+            // put the current char into the map
+            freq.put(charAtJ, freq.getOrDefault(charAtJ, 0) + 1);
+            // if the size of the map is < k, we increase the size of window
+            if (freq.size() < k)
+                j++;
+            // if it equals k, it means this is a candidate. check size with current max and increase window size
+            else if (freq.size() == k){
+                max = Integer.max(max, j - i + 1);
+                j++;
+            }
+            // goes here if the map has more than k unique elements
+            // keep removing the ith element from the map until its size goes <=k
+            // if a char has 0 as freq, remove it from the map
+            else{
+                while (freq.size() > k){
+                    char charAtI = s.charAt(i);
+                    freq.put(charAtI, freq.get(charAtI) - 1);
+                    if (freq.get(charAtI) == 0)
+                        freq.remove(charAtI);
+                    i++;
+                }
+                j++;
+            }
+        }
+        return max;
+    }
     public static void main(String[] args) {
         SlidingWindow sw = new SlidingWindow();
-        System.out.println(sw.search("for", "forxxorfxdofr"));
+        System.out.println(sw.longestSubarrayOfSumK(new int[]{4, 2, 1, 1, 3, 2, 5}, 5));
     }
 }

@@ -164,6 +164,42 @@ public class SlidingWindow {
         }
         return max;
     }
+
+    public int lengthOfLongestSubstring(String s) {
+        int i = 0, j = 0;
+        int max = Integer.MIN_VALUE;
+
+        if (s.isEmpty())
+            return 0;
+
+        // map to keep track of the chars and their counts in each window
+        Map<Character, Integer> freq = new HashMap<>();
+        while(j < s.length()){
+            char charAtJ = s.charAt(j);
+            // put the current char into the map
+            freq.put(charAtJ, freq.getOrDefault(charAtJ, 0) + 1);
+            // if the size of the map equals size of current window, this is a potential answer
+            if (freq.size() == j - i + 1){
+                max = Integer.max(max, j - i + 1);
+                j++;
+            }
+            // goes here if current window has duplicate elements
+            else if (freq.size() < j - i + 1){
+                while (freq.size() < j - i + 1){
+                    char charAtI = s.charAt(i);
+                    freq.put(charAtI, freq.get(charAtI) - 1);
+                    if (freq.get(charAtI) == 0)
+                        freq.remove(charAtI);
+                    i++;
+                }
+                j++;
+            }
+        }
+
+        return max;
+    }
+
+
     public static void main(String[] args) {
         SlidingWindow sw = new SlidingWindow();
         System.out.println(sw.longestSubarrayOfSumK(new int[]{4, 2, 1, 1, 3, 2, 5}, 5));

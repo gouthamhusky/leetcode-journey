@@ -4,24 +4,28 @@ import java.util.*;
 
 public class SlidingWindow {
 
-    static long maximumSumSubarray(int K, ArrayList<Integer> Arr, int N){
+    static long maximumSumSubarray(int K, ArrayList<Integer> Arr,int N){
         int i = 0, j = 0;
-        int sum = 0, max = Integer.MIN_VALUE;
-
-        while (j < N){
+        int max = Integer.MIN_VALUE;
+        int sum = 0;
+        // loop until end pointer equals size of array
+        while( j < N){
+            // keep incrementing sum
             sum += Arr.get(j);
-            if (j - i + 1 < K){
+            // if size of window < K, increase the window size
+            if (j - i + 1 < K)
                 j++;
-            }
-            else {
-                max = Integer.max(sum, max);
+                // if window size == K
+            else if (j - i + 1 == K){
+                // get the max, check if it can be updated
+                max = Integer.max(max, sum);
+                // slide the window
                 sum -= Arr.get(i);
                 i++; j++;
             }
         }
         return max;
     }
-
 
     //https://practice.geeksforgeeks.org/problems/first-negative-integer-in-every-window-of-size-k3345/1
     public long[] printFirstNegativeInteger(long A[], int N, int K)
@@ -102,6 +106,23 @@ public class SlidingWindow {
                 return false;
         }
         return true;
+    }
+
+    public ArrayList<Integer> slidingMaximum(final List<Integer> A, int B) {
+        int i = 0, j = 0;
+        PriorityQueue<Integer> queue = new PriorityQueue<>(Collections.reverseOrder());
+        ArrayList<Integer> ans = new ArrayList<>();
+        while (j < A.size()){
+            queue.add(A.get(j));
+            if (j - i + 1 < B)
+                j++;
+            else{
+                ans.add(queue.peek());
+                queue.remove(A.get(i));
+                i++; j++;
+            }
+        }
+        return ans;
     }
 
     public int longestSubarrayOfSumK(int[] A, int K){
@@ -199,6 +220,65 @@ public class SlidingWindow {
         return max;
     }
 
+    public int maximumToys(String s){
+        int i = 0, j = 0;
+        int max = Integer.MIN_VALUE;
+
+        Map<Character, Integer> freq = new HashMap<>();
+        while(j < s.length()){
+            char charAtJ = s.charAt(j);
+            // put the current char into the map
+            freq.put(charAtJ, freq.getOrDefault(charAtJ, 0) + 1);
+
+            // if the size of the map equals max unique toys, this is a potential answer
+            if (freq.size() == 2){
+                max = Integer.max(max, freq.values().stream().reduce(0, Integer::sum));
+                j++;
+            } else if (freq.size() < 2){
+                j++;
+            } else {
+                while (freq.size() > 2){
+                    char charAtI = s.charAt(i);
+                    freq.put(charAtI, freq.get(charAtI) - 1);
+                    if (freq.get(charAtI) == 0)
+                        freq.remove(charAtI);
+                    i++;
+                }
+                j++;
+            }
+        }
+        return max;
+    }
+
+    // https://leetcode.com/problems/minimum-window-substring/
+    public int minWindow(String s, String t) {
+        int i = 0, j = 0;
+        int min = Integer.MAX_VALUE;
+
+        // build the frequency map for the target string
+        Map<Character, Integer> freq = new HashMap<>();
+        for (char c : t.toCharArray()){
+            freq.put(c, freq.getOrDefault(c, 0) + 1);
+        }
+
+        int count = freq.size();
+
+        while(j < s.length()){
+            char charAtJ = s.charAt(j);
+            // put the current char into the map
+            freq.put(charAtJ, freq.getOrDefault(charAtJ, 0) - 1);
+
+            if (count == 0){
+                while(count == 0){
+
+                }
+            }
+
+        }
+
+        return min;
+
+    }
 
     public static void main(String[] args) {
         SlidingWindow sw = new SlidingWindow();

@@ -2,6 +2,9 @@ package org.slidingwindow;
 
 import java.util.*;
 
+import static java.lang.Integer.max;
+
+
 public class SlidingWindow {
 
     static long maximumSumSubarray(int K, ArrayList<Integer> Arr,int N){
@@ -18,7 +21,7 @@ public class SlidingWindow {
                 // if window size == K
             else if (j - i + 1 == K){
                 // get the max, check if it can be updated
-                max = Integer.max(max, sum);
+                max = max(max, sum);
                 // slide the window
                 sum -= Arr.get(i);
                 i++; j++;
@@ -166,7 +169,7 @@ public class SlidingWindow {
                 j++;
             // if it equals k, it means this is a candidate. check size with current max and increase window size
             else if (freq.size() == k){
-                max = Integer.max(max, j - i + 1);
+                max = max(max, j - i + 1);
                 j++;
             }
             // goes here if the map has more than k unique elements
@@ -201,7 +204,7 @@ public class SlidingWindow {
             freq.put(charAtJ, freq.getOrDefault(charAtJ, 0) + 1);
             // if the size of the map equals size of current window, this is a potential answer
             if (freq.size() == j - i + 1){
-                max = Integer.max(max, j - i + 1);
+                max = max(max, j - i + 1);
                 j++;
             }
             // goes here if current window has duplicate elements
@@ -232,7 +235,7 @@ public class SlidingWindow {
 
             // if the size of the map equals max unique toys, this is a potential answer
             if (freq.size() == 2){
-                max = Integer.max(max, freq.values().stream().reduce(0, Integer::sum));
+                max = max(max, freq.values().stream().reduce(0, Integer::sum));
                 j++;
             } else if (freq.size() < 2){
                 j++;

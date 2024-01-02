@@ -65,8 +65,49 @@ fun containsNearbyDuplicate(nums: IntArray, k: Int): Boolean {
     return false
 }
 
+fun checkInclusion(s1: String, s2: String): Boolean {
+    val mapForS1 = hashMapOf<Char, Int>()
+    val mapForS2 = hashMapOf<Char, Int>()
+    val k = s1.length
+    for (c in s1.toCharArray())
+        mapForS1[c] = mapForS1.getOrDefault(c, 0) + 1
+
+    var count = mapForS1.size
+    var i = 0
+    var j = 0
+
+    while (j < s2.length){
+        val current = s2[j]
+        mapForS2.put(current, mapForS2.getOrDefault(current, 0) + 1)
+
+        if (j -i + 1 < k)
+            j++
+
+        else if (j - i + 1 == k){
+            if(compareMaps(mapForS1, mapForS2))
+                return true
+            else{
+                mapForS2.put(s2[i], mapForS2.get(s2[i])!! - 1)
+                if(mapForS2.get(s2[i]) == 0)
+                    mapForS2.remove(s2[i])
+                i++
+                j++
+            }
+        }
+    }
+    return false
+}
+
+private fun compareMaps(map1 : Map<Char, Int>, map2: Map<Char, Int>): Boolean {
+    for (key in map1.keys){
+        if (! (map2.containsKey(key) && map2.get(key) == map1.get(key)))
+            return false
+    }
+    return true
+}
+
 
 
 fun main() {
-    print(containsNearbyDuplicate(intArrayOf(1,2,3,1), 3))
+    checkInclusion("adc", "dcda")
 }

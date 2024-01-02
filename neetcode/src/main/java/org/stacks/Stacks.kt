@@ -72,7 +72,178 @@ fun largestRectangleArea(heights: IntArray): Int {
     return area.max()
 }
 
+class MyQueue() {
+
+    val first = Stack<Int>()
+    val second = Stack<Int>()
+
+    fun push(x: Int) {
+        first.push(x)
+    }
+
+    fun pop(): Int {
+        while (!first.empty()){
+            val element = first.pop()
+            second.push(element)
+        }
+        val popped = second.pop()
+
+        while (!second.empty()){
+            first.push(second.pop())
+        }
+
+        return popped
+    }
+
+    fun peek(): Int {
+        while (!first.empty()){
+            val element = first.pop()
+            second.push(element)
+        }
+
+        val peeked = second.peek()
+
+        while (!second.empty()){
+            first.push(second.pop())
+        }
+
+        return peeked
+    }
+
+    fun empty(): Boolean {
+        return first.empty()
+    }
+}
+
+fun isValid(s: String): Boolean {
+    val stack = Stack<Char>()
+    for (c in s.toCharArray()){
+        if (c == '(' || c == '[' || c =='{')
+            stack.push(c)
+        else{
+            when(c){
+                ')' -> if (stack.empty() || stack.pop() != '(') return false
+                ']' -> if (stack.empty() || stack.pop() != '[') return false
+                '}' -> if (stack.empty() || stack.pop() != '{') return false
+            }
+        }
+    }
+    return stack.empty()
+}
+
+fun minAddToMakeValid(s: String): Int {
+    val stack = Stack<Char>()
+    for (c in s.toCharArray()){
+        if(c == ')'){
+            if (!stack.isEmpty() && stack.peek() == '(')
+                stack.pop()
+            else
+                stack.push(c)
+        }
+        else
+            stack.push(c)
+    }
+    return stack.size
+}
+
+class MinStack() {
+
+    val stack = Stack<Pair<Int, Int>>()
+
+    fun push(`val`: Int) {
+        if(stack.isEmpty()){
+            stack.push(Pair(`val`, `val`))
+        }
+        else{
+            val minimum = if (`val` < stack.peek().second) `val` else stack.peek().second
+            stack.push(Pair(`val`, minimum))
+        }
+    }
+
+    fun pop() {
+        stack.pop()
+    }
+
+    fun top(): Int {
+        return stack.peek().first
+    }
+
+    fun getMin(): Int {
+        return stack.peek().second
+    }
+}
+
+fun evalRPN(tokens: Array<String>): Int {
+    val stack = Stack<Int>()
+    val set = setOf("+", "-", "*", "/")
+    for (token in tokens){
+        if (token !in set)
+            stack.push(token.toInt())
+        else{
+            val op1 = stack.pop()
+            val op2 = stack.pop()
+            when(token){
+                "+" -> stack.push(op2 + op1)
+                "-" -> stack.push(op2 - op1)
+                "*" -> stack.push(op2 * op1)
+                "/" -> stack.push(op2 / op1)
+            }
+        }
+    }
+    return stack.peek()
+}
+
+fun generateParenthesis(n: Int): List<String> {
+    val result = mutableListOf<String>()
+    generateParenthesisHelper(0, 0, n, StringBuilder(), result)
+    return result
+}
+
+fun generateParenthesisHelper(openN: Int, closedN: Int, n: Int, stack: StringBuilder, result: MutableList<String>){
+    if(openN == n && closedN == n){
+        result.add(stack.toString())
+        return
+    }
+    if(openN < n){
+        stack.append("(")
+        generateParenthesisHelper(openN + 1, closedN, n, stack, result)
+        stack.deleteCharAt(stack.length - 1)
+    }
+    if(openN > closedN){
+        stack.append(")")
+        generateParenthesisHelper(openN, closedN + 1, n, stack, result)
+        stack.deleteCharAt(stack.length - 1)
+    }
+}
+
+fun dailyTemperatures(temperatures: IntArray): IntArray {
+    val stack = Stack<Pair<Int, Int>>()
+    val hotterDay = mutableListOf<Int>()
+    for (i in temperatures.size - 1 downTo 0){
+        if (stack.empty())
+            hotterDay.add(-1)
+        else if (!stack.isEmpty() && stack.peek().first > temperatures[i])
+            hotterDay.add(stack.peek().second)
+        else if (!stack.isEmpty() && stack.peek().first <= temperatures[i]){
+            while (!stack.isEmpty() && stack.peek().first <= temperatures[i])
+                stack.pop()
+            if (stack.isEmpty())
+                hotterDay.add(-1)
+            else
+                hotterDay.add(stack.peek().second)
+        }
+        stack.push(Pair(temperatures[i], i))
+    }
+    hotterDay.reverse()
+    for (i in hotterDay.indices){
+        if (hotterDay[i] == -1)
+            hotterDay[i] = 0
+        else hotterDay[i] = hotterDay[i] - i
+    }
+    return hotterDay.toIntArray()
+}
+
+
 fun main() {
-    val heights = intArrayOf(2, 1, 5, 6, 2, 3)
-    println(largestRectangleArea(heights))
+    dailyTemperatures(intArrayOf(73,74,75,71,69,72,76,73))
 }

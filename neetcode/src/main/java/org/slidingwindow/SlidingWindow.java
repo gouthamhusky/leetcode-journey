@@ -278,10 +278,11 @@ public class SlidingWindow {
             }
 
         }
-
         return min;
 
     }
+
+
 
     public static void main(String[] args) {
         SlidingWindow sw = new SlidingWindow();
